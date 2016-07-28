@@ -1,0 +1,565 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E29A90041D4870500054DBED /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90031D4870500054DBED /* main.m */; };
+		E29A90071D4870500054DBED /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90061D4870500054DBED /* AppDelegate.m */; };
+		E29A900A1D4870500054DBED /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90091D4870500054DBED /* ViewController.m */; };
+		E29A900D1D4870500054DBED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E29A900B1D4870500054DBED /* Main.storyboard */; };
+		E29A900F1D4870500054DBED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29A900E1D4870500054DBED /* Assets.xcassets */; };
+		E29A90121D4870500054DBED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E29A90101D4870500054DBED /* LaunchScreen.storyboard */; };
+		E29A901D1D4870500054DBED /* AZPlayerViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A901C1D4870500054DBED /* AZPlayerViewDemoTests.m */; };
+		E29A90281D4870500054DBED /* AZPlayerViewDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90271D4870500054DBED /* AZPlayerViewDemoUITests.m */; };
+		E29A903E1D4870790054DBED /* AZLoaderURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90371D4870790054DBED /* AZLoaderURLConnection.m */; };
+		E29A903F1D4870790054DBED /* AZPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A90391D4870790054DBED /* AZPlayerView.m */; };
+		E29A90401D4870790054DBED /* AZVideoRequestTask.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A903B1D4870790054DBED /* AZVideoRequestTask.m */; };
+		E29A90411D4870790054DBED /* NSString+AZVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A903D1D4870790054DBED /* NSString+AZVideo.m */; };
+		E29A90441D4870F80054DBED /* IMG_2262.MOV in Resources */ = {isa = PBXBuildFile; fileRef = E29A90421D4870F80054DBED /* IMG_2262.MOV */; };
+		E29A90451D4870F80054DBED /* Video_AudioDemo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = E29A90431D4870F80054DBED /* Video_AudioDemo.mp4 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E29A90191D4870500054DBED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E29A8FF71D4870500054DBED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E29A8FFE1D4870500054DBED;
+			remoteInfo = AZPlayerViewDemo;
+		};
+		E29A90241D4870500054DBED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E29A8FF71D4870500054DBED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E29A8FFE1D4870500054DBED;
+			remoteInfo = AZPlayerViewDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E29A8FFF1D4870500054DBED /* AZPlayerViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AZPlayerViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29A90031D4870500054DBED /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E29A90051D4870500054DBED /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		E29A90061D4870500054DBED /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		E29A90081D4870500054DBED /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		E29A90091D4870500054DBED /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		E29A900C1D4870500054DBED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		E29A900E1D4870500054DBED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E29A90111D4870500054DBED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E29A90131D4870500054DBED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E29A90181D4870500054DBED /* AZPlayerViewDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AZPlayerViewDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29A901C1D4870500054DBED /* AZPlayerViewDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AZPlayerViewDemoTests.m; sourceTree = "<group>"; };
+		E29A901E1D4870500054DBED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E29A90231D4870500054DBED /* AZPlayerViewDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AZPlayerViewDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29A90271D4870500054DBED /* AZPlayerViewDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AZPlayerViewDemoUITests.m; sourceTree = "<group>"; };
+		E29A90291D4870500054DBED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E29A90361D4870790054DBED /* AZLoaderURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AZLoaderURLConnection.h; path = AZPlayerView/AZLoaderURLConnection.h; sourceTree = "<group>"; };
+		E29A90371D4870790054DBED /* AZLoaderURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AZLoaderURLConnection.m; path = AZPlayerView/AZLoaderURLConnection.m; sourceTree = "<group>"; };
+		E29A90381D4870790054DBED /* AZPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AZPlayerView.h; path = AZPlayerView/AZPlayerView.h; sourceTree = "<group>"; };
+		E29A90391D4870790054DBED /* AZPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AZPlayerView.m; path = AZPlayerView/AZPlayerView.m; sourceTree = "<group>"; };
+		E29A903A1D4870790054DBED /* AZVideoRequestTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AZVideoRequestTask.h; path = AZPlayerView/AZVideoRequestTask.h; sourceTree = "<group>"; };
+		E29A903B1D4870790054DBED /* AZVideoRequestTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AZVideoRequestTask.m; path = AZPlayerView/AZVideoRequestTask.m; sourceTree = "<group>"; };
+		E29A903C1D4870790054DBED /* NSString+AZVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+AZVideo.h"; path = "AZPlayerView/NSString+AZVideo.h"; sourceTree = "<group>"; };
+		E29A903D1D4870790054DBED /* NSString+AZVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+AZVideo.m"; path = "AZPlayerView/NSString+AZVideo.m"; sourceTree = "<group>"; };
+		E29A90421D4870F80054DBED /* IMG_2262.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = IMG_2262.MOV; sourceTree = "<group>"; };
+		E29A90431D4870F80054DBED /* Video_AudioDemo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Video_AudioDemo.mp4; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E29A8FFC1D4870500054DBED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A90151D4870500054DBED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A90201D4870500054DBED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E29A8FF61D4870500054DBED = {
+			isa = PBXGroup;
+			children = (
+				E29A90011D4870500054DBED /* AZPlayerViewDemo */,
+				E29A901B1D4870500054DBED /* AZPlayerViewDemoTests */,
+				E29A90261D4870500054DBED /* AZPlayerViewDemoUITests */,
+				E29A90001D4870500054DBED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E29A90001D4870500054DBED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E29A8FFF1D4870500054DBED /* AZPlayerViewDemo.app */,
+				E29A90181D4870500054DBED /* AZPlayerViewDemoTests.xctest */,
+				E29A90231D4870500054DBED /* AZPlayerViewDemoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E29A90011D4870500054DBED /* AZPlayerViewDemo */ = {
+			isa = PBXGroup;
+			children = (
+				E29A90351D48706B0054DBED /* AZPlayerView */,
+				E29A90051D4870500054DBED /* AppDelegate.h */,
+				E29A90061D4870500054DBED /* AppDelegate.m */,
+				E29A90081D4870500054DBED /* ViewController.h */,
+				E29A90091D4870500054DBED /* ViewController.m */,
+				E29A900B1D4870500054DBED /* Main.storyboard */,
+				E29A90421D4870F80054DBED /* IMG_2262.MOV */,
+				E29A90431D4870F80054DBED /* Video_AudioDemo.mp4 */,
+				E29A900E1D4870500054DBED /* Assets.xcassets */,
+				E29A90101D4870500054DBED /* LaunchScreen.storyboard */,
+				E29A90131D4870500054DBED /* Info.plist */,
+				E29A90021D4870500054DBED /* Supporting Files */,
+			);
+			path = AZPlayerViewDemo;
+			sourceTree = "<group>";
+		};
+		E29A90021D4870500054DBED /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E29A90031D4870500054DBED /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E29A901B1D4870500054DBED /* AZPlayerViewDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				E29A901C1D4870500054DBED /* AZPlayerViewDemoTests.m */,
+				E29A901E1D4870500054DBED /* Info.plist */,
+			);
+			path = AZPlayerViewDemoTests;
+			sourceTree = "<group>";
+		};
+		E29A90261D4870500054DBED /* AZPlayerViewDemoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E29A90271D4870500054DBED /* AZPlayerViewDemoUITests.m */,
+				E29A90291D4870500054DBED /* Info.plist */,
+			);
+			path = AZPlayerViewDemoUITests;
+			sourceTree = "<group>";
+		};
+		E29A90351D48706B0054DBED /* AZPlayerView */ = {
+			isa = PBXGroup;
+			children = (
+				E29A90381D4870790054DBED /* AZPlayerView.h */,
+				E29A90391D4870790054DBED /* AZPlayerView.m */,
+				E29A90361D4870790054DBED /* AZLoaderURLConnection.h */,
+				E29A90371D4870790054DBED /* AZLoaderURLConnection.m */,
+				E29A903A1D4870790054DBED /* AZVideoRequestTask.h */,
+				E29A903B1D4870790054DBED /* AZVideoRequestTask.m */,
+				E29A903C1D4870790054DBED /* NSString+AZVideo.h */,
+				E29A903D1D4870790054DBED /* NSString+AZVideo.m */,
+			);
+			name = AZPlayerView;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E29A8FFE1D4870500054DBED /* AZPlayerViewDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E29A902C1D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemo" */;
+			buildPhases = (
+				E29A8FFB1D4870500054DBED /* Sources */,
+				E29A8FFC1D4870500054DBED /* Frameworks */,
+				E29A8FFD1D4870500054DBED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AZPlayerViewDemo;
+			productName = AZPlayerViewDemo;
+			productReference = E29A8FFF1D4870500054DBED /* AZPlayerViewDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E29A90171D4870500054DBED /* AZPlayerViewDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E29A902F1D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemoTests" */;
+			buildPhases = (
+				E29A90141D4870500054DBED /* Sources */,
+				E29A90151D4870500054DBED /* Frameworks */,
+				E29A90161D4870500054DBED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E29A901A1D4870500054DBED /* PBXTargetDependency */,
+			);
+			name = AZPlayerViewDemoTests;
+			productName = AZPlayerViewDemoTests;
+			productReference = E29A90181D4870500054DBED /* AZPlayerViewDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E29A90221D4870500054DBED /* AZPlayerViewDemoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E29A90321D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemoUITests" */;
+			buildPhases = (
+				E29A901F1D4870500054DBED /* Sources */,
+				E29A90201D4870500054DBED /* Frameworks */,
+				E29A90211D4870500054DBED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E29A90251D4870500054DBED /* PBXTargetDependency */,
+			);
+			name = AZPlayerViewDemoUITests;
+			productName = AZPlayerViewDemoUITests;
+			productReference = E29A90231D4870500054DBED /* AZPlayerViewDemoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E29A8FF71D4870500054DBED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = arronzhu;
+				TargetAttributes = {
+					E29A8FFE1D4870500054DBED = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = VF4GVDALJ8;
+					};
+					E29A90171D4870500054DBED = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = VF4GVDALJ8;
+						TestTargetID = E29A8FFE1D4870500054DBED;
+					};
+					E29A90221D4870500054DBED = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = VF4GVDALJ8;
+						TestTargetID = E29A8FFE1D4870500054DBED;
+					};
+				};
+			};
+			buildConfigurationList = E29A8FFA1D4870500054DBED /* Build configuration list for PBXProject "AZPlayerViewDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E29A8FF61D4870500054DBED;
+			productRefGroup = E29A90001D4870500054DBED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E29A8FFE1D4870500054DBED /* AZPlayerViewDemo */,
+				E29A90171D4870500054DBED /* AZPlayerViewDemoTests */,
+				E29A90221D4870500054DBED /* AZPlayerViewDemoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E29A8FFD1D4870500054DBED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E29A90441D4870F80054DBED /* IMG_2262.MOV in Resources */,
+				E29A90121D4870500054DBED /* LaunchScreen.storyboard in Resources */,
+				E29A900F1D4870500054DBED /* Assets.xcassets in Resources */,
+				E29A90451D4870F80054DBED /* Video_AudioDemo.mp4 in Resources */,
+				E29A900D1D4870500054DBED /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A90161D4870500054DBED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A90211D4870500054DBED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E29A8FFB1D4870500054DBED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E29A900A1D4870500054DBED /* ViewController.m in Sources */,
+				E29A90071D4870500054DBED /* AppDelegate.m in Sources */,
+				E29A90041D4870500054DBED /* main.m in Sources */,
+				E29A90411D4870790054DBED /* NSString+AZVideo.m in Sources */,
+				E29A90401D4870790054DBED /* AZVideoRequestTask.m in Sources */,
+				E29A903F1D4870790054DBED /* AZPlayerView.m in Sources */,
+				E29A903E1D4870790054DBED /* AZLoaderURLConnection.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A90141D4870500054DBED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E29A901D1D4870500054DBED /* AZPlayerViewDemoTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E29A901F1D4870500054DBED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E29A90281D4870500054DBED /* AZPlayerViewDemoUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E29A901A1D4870500054DBED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E29A8FFE1D4870500054DBED /* AZPlayerViewDemo */;
+			targetProxy = E29A90191D4870500054DBED /* PBXContainerItemProxy */;
+		};
+		E29A90251D4870500054DBED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E29A8FFE1D4870500054DBED /* AZPlayerViewDemo */;
+			targetProxy = E29A90241D4870500054DBED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		E29A900B1D4870500054DBED /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E29A900C1D4870500054DBED /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		E29A90101D4870500054DBED /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E29A90111D4870500054DBED /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E29A902A1D4870500054DBED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		E29A902B1D4870500054DBED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E29A902D1D4870500054DBED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = AZPlayerViewDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E29A902E1D4870500054DBED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = AZPlayerViewDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		E29A90301D4870500054DBED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = AZPlayerViewDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AZPlayerViewDemo.app/AZPlayerViewDemo";
+			};
+			name = Debug;
+		};
+		E29A90311D4870500054DBED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = AZPlayerViewDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AZPlayerViewDemo.app/AZPlayerViewDemo";
+			};
+			name = Release;
+		};
+		E29A90331D4870500054DBED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = AZPlayerViewDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = AZPlayerViewDemo;
+			};
+			name = Debug;
+		};
+		E29A90341D4870500054DBED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = AZPlayerViewDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.arronzhu.AZPlayerViewDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = AZPlayerViewDemo;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E29A8FFA1D4870500054DBED /* Build configuration list for PBXProject "AZPlayerViewDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E29A902A1D4870500054DBED /* Debug */,
+				E29A902B1D4870500054DBED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E29A902C1D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E29A902D1D4870500054DBED /* Debug */,
+				E29A902E1D4870500054DBED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E29A902F1D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E29A90301D4870500054DBED /* Debug */,
+				E29A90311D4870500054DBED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E29A90321D4870500054DBED /* Build configuration list for PBXNativeTarget "AZPlayerViewDemoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E29A90331D4870500054DBED /* Debug */,
+				E29A90341D4870500054DBED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E29A8FF71D4870500054DBED /* Project object */;
+}

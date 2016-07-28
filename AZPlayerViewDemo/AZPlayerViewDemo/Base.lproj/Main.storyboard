@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Odm-QW-ggV" userLabel="Play">
+                                <rect key="frame" x="185" y="285" width="30" height="30"/>
+                                <state key="normal" title="播放"/>
+                                <connections>
+                                    <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0bm-jA-6Ks"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vVr-oy-gDI" userLabel="pause">
+                                <rect key="frame" x="385" y="285" width="30" height="30"/>
+                                <state key="normal" title="暂停"/>
+                                <connections>
+                                    <action selector="pause:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9Ex-rQ-NMo"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0GK-4S-SYH" userLabel="changeurl">
+                                <rect key="frame" x="172" y="407" width="56" height="29"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="切换视频"/>
+                                <connections>
+                                    <action selector="changeUrl:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nK6-KG-uWB"/>
+                                </connections>
+                            </button>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="2" translatesAutoresizingMaskIntoConstraints="NO" id="fOu-Tm-ulm" userLabel="rate slider">
+                                <rect key="frame" x="141" y="330" width="118" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="114" id="abR-Qe-1Ob"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="changeRate:" destination="BYZ-38-t0r" eventType="valueChanged" id="KZT-Q8-dgO"/>
+                                </connections>
+                            </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="vQr-Hd-58s" userLabel="volume slider">
+                                <rect key="frame" x="341" y="330" width="118" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="114" id="YDK-GX-q4J"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="changeVolume:" destination="BYZ-38-t0r" eventType="valueChanged" id="Blb-mS-Kk0"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="播放速度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TdZ-52-CW4">
+                                <rect key="frame" x="172" y="375" width="56" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="音量" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jeP-Kc-ROx">
+                                <rect key="frame" x="386" y="375" width="28" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="0GK-4S-SYH" firstAttribute="top" secondItem="TdZ-52-CW4" secondAttribute="bottom" constant="15" id="2KB-J1-3PQ"/>
+                            <constraint firstItem="0GK-4S-SYH" firstAttribute="centerX" secondItem="Odm-QW-ggV" secondAttribute="centerX" id="4Of-Eo-fQh"/>
+                            <constraint firstItem="TdZ-52-CW4" firstAttribute="top" secondItem="fOu-Tm-ulm" secondAttribute="bottom" constant="15" id="78Z-Iu-7Gd"/>
+                            <constraint firstItem="fOu-Tm-ulm" firstAttribute="top" secondItem="Odm-QW-ggV" secondAttribute="bottom" constant="15" id="Bhm-1q-w0l"/>
+                            <constraint firstItem="TdZ-52-CW4" firstAttribute="centerX" secondItem="Odm-QW-ggV" secondAttribute="centerX" id="ES7-VB-9WQ"/>
+                            <constraint firstItem="jeP-Kc-ROx" firstAttribute="centerX" secondItem="vVr-oy-gDI" secondAttribute="centerX" id="J4N-Gw-zCA"/>
+                            <constraint firstItem="Odm-QW-ggV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Kaw-VV-T05"/>
+                            <constraint firstItem="vVr-oy-gDI" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="VmB-2S-jud"/>
+                            <constraint firstItem="vVr-oy-gDI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" multiplier="4/3" id="a7T-tp-ucf"/>
+                            <constraint firstItem="fOu-Tm-ulm" firstAttribute="centerX" secondItem="Odm-QW-ggV" secondAttribute="centerX" id="bDs-FY-HSb"/>
+                            <constraint firstItem="vQr-Hd-58s" firstAttribute="centerX" secondItem="vVr-oy-gDI" secondAttribute="centerX" id="kHD-sf-ZUZ"/>
+                            <constraint firstItem="Odm-QW-ggV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" multiplier="2/3" id="oGj-cX-J6W"/>
+                            <constraint firstItem="vQr-Hd-58s" firstAttribute="top" secondItem="vVr-oy-gDI" secondAttribute="bottom" constant="15" id="sxh-H3-uc0"/>
+                            <constraint firstItem="jeP-Kc-ROx" firstAttribute="top" secondItem="vQr-Hd-58s" secondAttribute="bottom" constant="15" id="yBP-Vr-FrB"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="playButton" destination="Odm-QW-ggV" id="rEB-ZI-jcl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
