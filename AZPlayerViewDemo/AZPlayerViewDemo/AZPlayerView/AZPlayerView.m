@@ -85,7 +85,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
             layer.videoGravity = AVLayerVideoGravityResizeAspectFill;
             break;
         case AZPlayerGravityResize:
-            layer.videoGravity = AVLayerVideoGravityResizeAspect;
+            layer.videoGravity = AVLayerVideoGravityResize;
             break;
         default:
             break;
