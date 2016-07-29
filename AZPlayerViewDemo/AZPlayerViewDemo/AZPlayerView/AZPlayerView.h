@@ -98,4 +98,9 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
  */
 - (void)seekToTime:(CGFloat)seconds;
 
+/**
+ *  获取指定时间的缩略图
+ */
+- (UIImage *)getThumbnailAt:(CGFloat)seconds;
+
 @end

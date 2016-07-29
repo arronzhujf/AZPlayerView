@@ -23,6 +23,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 @interface AZPlayerView () <AZLoaderURLConnectionDelegate>
 @property (nonatomic, strong) AVURLAsset          *videoURLAsset;
 @property (nonatomic, strong) AVPlayerItem        *playerItem;
+@property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
 @property (nonatomic, strong) NSObject            *playbackTimeObserver;
 
 @property (nonatomic, assign) AZPlayerState        state;
@@ -119,10 +120,13 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     self.isLocalVideo = NO;
     self.resouerLoader          = [[AZLoaderURLConnection alloc] initWithCacheUrl:_cacheUrl];
     self.resouerLoader.delegate = self;
+    
     NSURL *playUrl              = [self.resouerLoader getSchemeVideoURL:url];
     self.videoURLAsset          = [AVURLAsset URLAssetWithURL:playUrl options:nil];
     [_videoURLAsset.resourceLoader setDelegate:self.resouerLoader queue:dispatch_get_main_queue()];
+    
     self.playerItem      = [AVPlayerItem playerItemWithAsset:_videoURLAsset];
+    self.imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_videoURLAsset];
     
 //    if (!self.player) {
         self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
@@ -145,6 +149,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 - (void)loadLoacalResource:(NSURL *)url {
     NSLog(@"load local resource");
     self.videoURLAsset = [AVURLAsset URLAssetWithURL:url options:nil];
+    self.imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_videoURLAsset];
     NSString *tracksKey = @"tracks";
     WeakSelf
     [self.videoURLAsset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
@@ -252,6 +257,30 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
         [weakSelf.player play];
     }];
+}
+
+- (UIImage *)getThumbnailAt:(CGFloat)seconds {
+    seconds = MAX(0, seconds);
+    seconds = MIN(seconds, self.duration);
+    
+    CMTime time = CMTimeMake(seconds, 1);
+    NSError *error;
+    CMTime actualTime;
+    CGImageRef imageRef = [_imageGenerator copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    
+    if (!error) {
+        NSString *actualTimeString = (__bridge_transfer NSString *)CMTimeCopyDescription(NULL, actualTime);
+        NSString *requestedTimeString = (__bridge_transfer NSString *)CMTimeCopyDescription(NULL, time);
+        NSLog(@"Got thumbnail: Asked for %@, got %@", requestedTimeString,
+              actualTimeString);
+    } else {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)]) {
+            [self.delegate playerView:self didFailWithError:error url:_url];
+        }
+    }
+    UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    return thumbnail;
 }
 
 - (void)pause {
