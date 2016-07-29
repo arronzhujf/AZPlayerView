@@ -14,21 +14,14 @@ AZPlayerView接口提供了各种操作：
 current, duration,progress,rate,volume,gravity等
 
 同时AZPlayerView的delegate十分简洁：
-/**
- *  视频资源的状态转变，各个状态的操作逻辑应在在这个函数中处理
- */
+
+ 视频资源的状态转变，各个状态的操作逻辑应在在这个函数中处理
 - (void)playerView:(AZPlayerView *)playerView didChangeToNewState:(AZPlayerState)state url:(NSURL *)url;
-/**
- *  每隔一秒抛出视频的播放时间和播放时间百分比
- *
- *  @param playerView      playerView
- *  @param currentTime     当前播放时间
- *  @param currentProgress 当前播放时间占比
- */
+
+ 每隔一秒抛出视频的播放时间和播放时间百分比
 - (void)playerView:(AZPlayerView *)playerView playBackProgressChange:(CGFloat)currentTime :(CGFloat)currentProgress url:(NSURL *)url;
-/**
- *  网络资源加载的进度
- */
+
+ 网络资源加载的进度
 - (void)playerView:(AZPlayerView *)playerView loadedProgressChange:(CGFloat)loadedProgress;
 
 开始使用吧！
