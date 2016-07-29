@@ -2,6 +2,7 @@
 一款iOS视频播放组件(UIView中嵌入AVPlayer),支持本地url和网络url,网络资源目前只支持mp4。
 
 Usage:
+
 就像使用UIView一样使用AZPlayerView!
 初始化方法：- (instancetype)initWithFrame:(CGRect)frame delegate:(id<AZPlayerViewDelegate>) delegate；
 本地资源在初始化后直接设置URL;
