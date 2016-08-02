@@ -37,7 +37,7 @@
     NSURL *originalMovieURL1 = [NSURL fileURLWithPath:sourceMoviePath1];
     self.playerView = [[AZPlayerView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/3.0) delegate:self];
     self.playerView.url = originalMovieURL1;
-    
+    self.playerView.autoRepeat = YES;
 //        NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
 //        self.playerView.cacheUrl = [NSURL URLWithString:document];
 //        self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/14564977406580.mp4"];
@@ -65,7 +65,7 @@
     NSString *sourceMoviePath = [[NSBundle mainBundle] pathForResource:self.resource ofType:self.type];
     NSURL *originalMovieURL = [NSURL fileURLWithPath:sourceMoviePath];
     self.playerView.url = originalMovieURL;
-    
+    self.playerView.autoRepeat = YES;
 //    NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
 //    self.playerView.cacheUrl = [NSURL URLWithString:document];
 //    self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/1457521866561_5888_854x480.mp4"];
@@ -103,8 +103,6 @@
             result = @"PlayerStatePause";
             break;
         case AZPlayerStateFinish:
-            [playerView seekToTime:0];
-            [playerView play];
             result = @"PlayerStateFinish";
             break;
         default:
