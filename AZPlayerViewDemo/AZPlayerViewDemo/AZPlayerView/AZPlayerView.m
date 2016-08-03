@@ -173,9 +173,9 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
                     [[NSNotificationCenter defaultCenter] removeObserver:self];
                 }
                 if (!weakSelf.player) {
-                    [weakSelf.player removeTimeObserver:_playbackTimeObserver];
                     weakSelf.player = [AVPlayer playerWithPlayerItem:_playerItem];
                 } else {
+                    [weakSelf.player removeTimeObserver:_playbackTimeObserver];
                     [weakSelf.player replaceCurrentItemWithPlayerItem:_playerItem];
                 }
                 [weakSelf setPlayer:weakSelf.player];
@@ -196,12 +196,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 - (void)dealloc {
     [self.resouerLoader.task clearData];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemLoadedTimeRangesKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackBufferEmptyKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath];
-    [self.player removeTimeObserver:self.playbackTimeObserver];
+    self.playerItem = nil;
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
@@ -218,7 +213,6 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackBufferEmptyKeyPath];
     [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath];
     [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath];
-    [self.player removeTimeObserver:self.playbackTimeObserver];
     
     _playerItem = playerItem;
     
@@ -273,17 +267,17 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 #pragma mark - ACTION
 - (void)play {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         [self.player play];
         self.state = AZPlayerStatePlaying;
     } else {
-        NSLog(@"PLPlayerView the url resource is not ready!");
+        NSLog(@"AZPlayerView the url resource is not ready or be stopped, video will play after ready, please wait.");
         _autoPlayAfterReady = YES;
     }
 }
 
 - (void)seekToTime:(CGFloat)seconds Pause:(BOOL)pause {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         seconds = MAX(0, seconds);
         seconds = MIN(seconds, self.duration);
         
@@ -297,12 +291,12 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     } else {
         _autoPlayAfterReady = YES;
         _startTime = seconds;
-        NSLog(@"PLPlayerView the url resource is not ready, PLPlayerView will seekToTime after ready,please wait!");
+        NSLog(@"AZPlayerView the url resource is not ready or be stopped, AZPlayerView will seekToTime after ready,please wait.");
     }
 }
 
 - (UIImage *)getThumbnailAt:(CGFloat)seconds {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         seconds = MAX(0, seconds);
         seconds = MIN(seconds, self.duration);
         
@@ -325,27 +319,31 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         CGImageRelease(imageRef);
         return thumbnail;
     } else {
-        NSLog(@"PLPlayerView get thumbnail failed, the url resource is not ready!");
+        NSLog(@"AZPlayerView get thumbnail failed, the url resource is not ready or be stopped!");
         return nil;
     }
 }
 
 - (void)pause {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         [self.player pause];
         self.state = AZPlayerStatePause;
     } else {
-        NSLog(@"PLPlayerView pause failed, the url resource is not ready!");
+        _autoPlayAfterReady = NO;
+        NSLog(@"AZPlayerView pause failed, the url resource is not ready or be stopped! video will pause when it is ready");
     }
 }
 
 - (void)stop {
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self seekToTime:0.0 Pause:YES];
-        self.state = AZPlayerStateStopped;
     } else {
+        self.playerItem = nil;
+        [self.player removeTimeObserver:self.playbackTimeObserver];
+        [[NSNotificationCenter defaultCenter]removeObserver:self];
         [self.player replaceCurrentItemWithPlayerItem:nil];
     }
+    self.state = AZPlayerStateStopped;
 }
 
 #pragma mark - Observer
@@ -366,15 +364,16 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
             self.duration = CMTimeGetSeconds(self.player.currentItem.duration);
             self.player.rate = _rate;
             self.player.volume = _volume;
+            self.state = AZPlayerStateReady;
             if (_autoPlayAfterReady) {
                 CGFloat seconds = MAX(0, _startTime);
                 seconds = MIN(seconds, self.duration);
                 [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
                     [self.player play];
                 }];
+            } else {
+                [self pause];
             }
-            self.state = AZPlayerStateReady;
-            
         }
         else if ([self.player.currentItem status] == AVPlayerItemStatusFailed || [self.player.currentItem status] == AVPlayerItemStatusUnknown)
         {
