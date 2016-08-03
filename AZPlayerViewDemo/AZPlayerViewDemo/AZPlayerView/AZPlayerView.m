@@ -287,7 +287,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         
         [self.player pause];
         WeakSelf
-        [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+        [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:CMTimeMake(0.1, 1) toleranceAfter:CMTimeMake(0.1, 1) completionHandler:^(BOOL finished) {
             if (!pause) {
                 [weakSelf.player play];
             }
