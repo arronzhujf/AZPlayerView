@@ -268,6 +268,9 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 #pragma mark - ACTION
 - (void)play {
+    if (self.state == AZPlayerStatePlaying) {
+        return;
+    }
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         [self.player play];
         self.state = AZPlayerStatePlaying;
@@ -326,6 +329,9 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 }
 
 - (void)pause {
+    if (self.state == AZPlayerStatePause) {
+        return;
+    }
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
         [self.player pause];
         self.state = AZPlayerStatePause;
@@ -336,13 +342,17 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 }
 
 - (void)stop {
+    if (self.state == AZPlayerStateStopped) {
+        return;
+    }
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
-        [self seekToTime:0.0 Pause:YES];
+        [self.player pause];
+        [self.player seekToTime:CMTimeMake(0, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+            self.state = AZPlayerStateStopped;
+        }];
     } else {
         _autoPlayAfterReady = NO;
-        _startTime = 0;
     }
-    self.state = AZPlayerStateStopped;
 }
 
 #pragma mark - Observer
@@ -370,7 +380,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
                     [self.player play];
                 }];
             } else {
-                [self pause];
+                [self stop];
             }
         }
         else if ([self.player.currentItem status] == AVPlayerItemStatusFailed || [self.player.currentItem status] == AVPlayerItemStatusUnknown)
