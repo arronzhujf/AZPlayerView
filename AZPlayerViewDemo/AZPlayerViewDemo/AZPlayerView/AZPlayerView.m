@@ -197,6 +197,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 - (void)dealloc {
     [self.resouerLoader.task clearData];
     self.playerItem = nil;
+    [self.player removeTimeObserver:_playbackTimeObserver];
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
@@ -338,10 +339,8 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self seekToTime:0.0 Pause:YES];
     } else {
-        self.playerItem = nil;
-        [self.player removeTimeObserver:self.playbackTimeObserver];
-        [[NSNotificationCenter defaultCenter]removeObserver:self];
-        [self.player replaceCurrentItemWithPlayerItem:nil];
+        _autoPlayAfterReady = NO;
+        _startTime = 0;
     }
     self.state = AZPlayerStateStopped;
 }
@@ -360,7 +359,6 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
     if ([keyPath isEqualToString:AZVideoPlayerItemStatusKeyPath]) {
         if ([playerItem status] == AVPlayerItemStatusReadyToPlay) {
-            //            [self monitoringPlayback:playerItem];
             self.duration = CMTimeGetSeconds(self.player.currentItem.duration);
             self.player.rate = _rate;
             self.player.volume = _volume;
