@@ -48,7 +48,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self = [super initWithFrame:frame]) {
         _delegate = delegate;
         _isFirstInit = YES;
-        [self initBasicData];
+        [self initData];
     }
     return self;
 }
@@ -85,8 +85,22 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     }
 }
 
+- (void)initData {
+    _loadedProgress = 0.0;
+    _current = 0.0;
+    _duration = 0.0;
+    _rate = 1.0;
+    _volume = 0.5;
+    _isFinishLoad = NO;
+    _stopInBackground = YES;
+    _autoPlayAfterReady = YES;
+    _startTime = 0;
+    _autoRepeat = NO;
+    _state = AZPlayerStateUnready;
+    _gravity = AZPlayerGravityResize;
+}
+
 - (void)initPlayerWithUrl:(NSURL *)url {
-    [self initBasicData];
     NSString *str = [url absoluteString];
     if ([str hasPrefix:@"https"] || [str hasPrefix:@"http"]) {//网络资源
         NSURLComponents *components = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO];
@@ -106,21 +120,6 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         [self loadLoacalResource:url];
     }
     
-}
-
-- (void)initBasicData {
-    _loadedProgress = 0.0;
-    _current = 0.0;
-    _duration = 0.0;
-    _rate = 1.0;
-    _volume = 0.5;
-    _isFinishLoad = NO;
-    _stopInBackground = YES;
-    _autoPlayAfterReady = YES;
-    _startTime = 0;
-    _autoRepeat = NO;
-    _state = AZPlayerStateUnready;
-    _gravity = AZPlayerGravityResize;
 }
 
 - (void)loadRemoteResource:(NSURL *)url {
@@ -271,23 +270,23 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self.state == AZPlayerStatePlaying) {
         return;
     }
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self.player play];
         self.state = AZPlayerStatePlaying;
     } else {
-        NSLog(@"AZPlayerView the url resource is not ready or be stopped, video will play after ready, please wait.");
+        NSLog(@"AZPlayerView the url resource is not ready, video will play after ready, please wait.");
         _autoPlayAfterReady = YES;
     }
 }
 
 - (void)seekToTime:(CGFloat)seconds Pause:(BOOL)pause {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         seconds = MAX(0, seconds);
         seconds = MIN(seconds, self.duration);
         
         [self.player pause];
         WeakSelf
-        [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:CMTimeMake(0.1, 1) toleranceAfter:CMTimeMake(0.1, 1) completionHandler:^(BOOL finished) {
+        [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:CMTimeMake(0.5, 1) toleranceAfter:CMTimeMake(0.5, 1) completionHandler:^(BOOL finished) {
             if (!pause) {
                 [weakSelf.player play];
             }
@@ -295,12 +294,12 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     } else {
         _autoPlayAfterReady = YES;
         _startTime = seconds;
-        NSLog(@"AZPlayerView the url resource is not ready or be stopped, AZPlayerView will seekToTime after ready,please wait.");
+        NSLog(@"AZPlayerView the url resource is not ready, AZPlayerView will seekToTime after ready,please wait.");
     }
 }
 
 - (UIImage *)getThumbnailAt:(CGFloat)seconds {
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         seconds = MAX(0, seconds);
         seconds = MIN(seconds, self.duration);
         
@@ -323,7 +322,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         CGImageRelease(imageRef);
         return thumbnail;
     } else {
-        NSLog(@"AZPlayerView get thumbnail failed, the url resource is not ready or be stopped!");
+        NSLog(@"AZPlayerView get thumbnail failed, the url resource is not ready!");
         return nil;
     }
 }
@@ -332,12 +331,15 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self.state == AZPlayerStatePause) {
         return;
     }
-    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded && self.state != AZPlayerStateStopped) {
+    if (self.state == AZPlayerStateStopped) {
+        self.state = AZPlayerStatePause;
+    }
+    if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self.player pause];
         self.state = AZPlayerStatePause;
     } else {
         _autoPlayAfterReady = NO;
-        NSLog(@"AZPlayerView pause failed, the url resource is not ready or be stopped! video will pause when it is ready");
+        NSLog(@"AZPlayerView pause failed, the url resource is not ready! video will pause when it is ready");
     }
 }
 
@@ -347,7 +349,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     }
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self.player pause];
-        [self.player seekToTime:CMTimeMake(0, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+        [self.player seekToTime:CMTimeMake(0, 1) toleranceBefore:CMTimeMake(0.5, 1) toleranceAfter:CMTimeMake(0.5, 1) completionHandler:^(BOOL finished) {
             self.state = AZPlayerStateStopped;
         }];
     } else {

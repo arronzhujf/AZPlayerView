@@ -70,6 +70,8 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
 @property (nonatomic, assign  ) BOOL           stopInBackground;        //是否在后台播放，默认YES
 @property (nonatomic, assign) CGFloat          rate;                    //播放速率 0.0相当于暂停, 1.0为原始速率
 @property (nonatomic, assign) CGFloat          volume;                  //播放音量 0.0最小 1.0最大
+
+/**每次在设置视频的其他属性后再设置url，确保属性生效*/
 @property (nonatomic, strong) NSURL            *url;                    //资源URL
 @property (nonatomic, assign) AZPlayerGravity  gravity;                 //默认AZPlayerGravityResize
 
@@ -88,7 +90,7 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
 /**播放*/
 - (void)play;
 
-/**以下操作应在确保资源Ready后操作*/
+/**以下操作应在确保资源Ready后操作,若不在ready状态后操作请看log日志提示*/
 /**
  *  暂停播放
  */

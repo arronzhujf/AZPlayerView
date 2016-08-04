@@ -31,13 +31,16 @@
 
 - (void)initUI {
     self.playButton.enabled = NO;
-    self.resource = @"IMG_2262";
-    self.type = @"MOV";
+    self.resource = @"Video_AudioDemo";
+    self.type = @"mp4";
     NSString *sourceMoviePath1 = [[NSBundle mainBundle] pathForResource:self.resource ofType:self.type];
     NSURL *originalMovieURL1 = [NSURL fileURLWithPath:sourceMoviePath1];
     self.playerView = [[AZPlayerView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/3.0) delegate:self];
-    self.playerView.url = originalMovieURL1;
+    self.playerView.autoPlayAfterReady = YES;
     self.playerView.autoRepeat = YES;
+    self.playerView.startTime = 10;
+    self.playerView.url = originalMovieURL1;
+    
 //        NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
 //        self.playerView.cacheUrl = [NSURL URLWithString:document];
 //        self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/14564977406580.mp4"];
@@ -64,8 +67,9 @@
     }
     NSString *sourceMoviePath = [[NSBundle mainBundle] pathForResource:self.resource ofType:self.type];
     NSURL *originalMovieURL = [NSURL fileURLWithPath:sourceMoviePath];
-    self.playerView.url = originalMovieURL;
     self.playerView.autoRepeat = YES;
+    self.playerView.url = originalMovieURL;
+    
 //    NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
 //    self.playerView.cacheUrl = [NSURL URLWithString:document];
 //    self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/1457521866561_5888_854x480.mp4"];
@@ -86,27 +90,26 @@
     NSString *result;
     switch (state) {
         case AZPlayerStateURLLoaded:
-            result = @"PlayerStateURLLoaded";
+            result = @"AZPlayerStateURLLoaded";
             break;
         case AZPlayerStateReady:
-            result = @"PlayerStateReady";
+            result = @"AZPlayerStateReady";
             self.playButton.enabled = YES;
-            [self.playerView play];
             break;
         case AZPlayerStateStopped:
-            result = @"PlayerStateStopped";
+            result = @"AZPlayerStateStopped";
             break;
         case AZPlayerStatePlaying:
-            result = @"PlayerStatePlaying";
+            result = @"AZPlayerStatePlaying";
             break;
         case AZPlayerStatePause:
-            result = @"PlayerStatePause";
+            result = @"AZPlayerStatePause";
             break;
         case AZPlayerStateFinish:
-            result = @"PlayerStateFinish";
+            result = @"AZPlayerStateFinish";
             break;
         default:
-            result = @"PlayerStateUnkonwn";
+            result = @"AZPlayerStateUnkonwn";
             break;
     }
     NSLog(@"changeToNewState --> %@", result);
