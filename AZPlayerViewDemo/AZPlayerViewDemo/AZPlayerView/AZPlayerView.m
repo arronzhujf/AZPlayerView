@@ -29,6 +29,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 @property (nonatomic, assign) AZPlayerState          state;
 @property (nonatomic, assign) CGFloat                duration;
 @property (nonatomic, assign) CGFloat                current;
+@property (nonatomic, assign) CGSize                 videoSize;
 
 //@property (nonatomic, assign) BOOL                 isPauseByUser;           //是否被用户暂停
 @property (nonatomic, assign) BOOL                   isLocalVideo;            //是否播放本地文件
@@ -48,6 +49,13 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self = [super initWithFrame:frame]) {
         _delegate = delegate;
         _isFirstInit = YES;
+        _isFinishLoad = NO;
+        _stopInBackground = YES;
+        _autoPlayAfterReady = YES;
+        _startTime = 0;
+        _autoRepeat = NO;
+        _state = AZPlayerStateUnready;
+        _gravity = AZPlayerGravityResize;
         [self initData];
     }
     return self;
@@ -91,16 +99,11 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     _duration = 0.0;
     _rate = 1.0;
     _volume = 0.5;
-    _isFinishLoad = NO;
-    _stopInBackground = YES;
-    _autoPlayAfterReady = YES;
-    _startTime = 0;
-    _autoRepeat = NO;
-    _state = AZPlayerStateUnready;
-    _gravity = AZPlayerGravityResize;
+    _videoSize = CGSizeZero;
 }
 
 - (void)initPlayerWithUrl:(NSURL *)url {
+    [self initData];
     NSString *str = [url absoluteString];
     if ([str hasPrefix:@"https"] || [str hasPrefix:@"http"]) {//网络资源
         NSURLComponents *components = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO];
@@ -122,6 +125,14 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     
 }
 
+- (void)dealloc {
+    [self.resouerLoader.task clearData];
+    self.playerItem = nil;
+    [self.player removeTimeObserver:_playbackTimeObserver];
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+
+#pragma mark - Private
 - (void)loadRemoteResource:(NSURL *)url {
     NSLog(@"load remote resource");
     self.isLocalVideo = NO;
@@ -163,26 +174,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
             AVKeyValueStatus status = [weakSelf.videoURLAsset statusOfValueForKey:tracksKey error:&error];
             
             if (status == AVKeyValueStatusLoaded) {
-                weakSelf.isLocalVideo = YES;
-                weakSelf.playerItem = [AVPlayerItem playerItemWithURL:_url];
-                //remove old observer
-                if (_isFirstInit) {
-                    _isFirstInit = NO;
-                } else {
-                    [[NSNotificationCenter defaultCenter] removeObserver:self];
-                }
-                if (!weakSelf.player) {
-                    weakSelf.player = [AVPlayer playerWithPlayerItem:_playerItem];
-                } else {
-                    [weakSelf.player removeTimeObserver:_playbackTimeObserver];
-                    [weakSelf.player replaceCurrentItemWithPlayerItem:_playerItem];
-                }
-                [weakSelf setPlayer:weakSelf.player];
-                
-                //add new observer
-                [weakSelf addObserverForPlayback:_playerItem];
-                
-                weakSelf.state = AZPlayerStateURLLoaded;
+                [weakSelf loadedLocalAssetForPlay];
             } else {
                 if (weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)]) {
                     [weakSelf.delegate playerView:weakSelf didFailWithError:error url:url];
@@ -193,11 +185,90 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     }];
 }
 
-- (void)dealloc {
-    [self.resouerLoader.task clearData];
-    self.playerItem = nil;
-    [self.player removeTimeObserver:_playbackTimeObserver];
-    [[NSNotificationCenter defaultCenter]removeObserver:self];
+- (void)loadedLocalAssetForPlay {
+    self.isLocalVideo = YES;
+    self.playerItem = [AVPlayerItem playerItemWithURL:_url];
+    NSArray *array = self.videoURLAsset.tracks;
+    for (AVAssetTrack *track in array) {
+        if ([track.mediaType isEqualToString:AVMediaTypeVideo]) {
+            _videoSize = track.naturalSize;
+        }
+    }
+    //remove old observer
+    if (_isFirstInit) {
+        _isFirstInit = NO;
+    } else {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
+    if (!self.player) {
+        self.player = [AVPlayer playerWithPlayerItem:_playerItem];
+    } else {
+        [self.player removeTimeObserver:_playbackTimeObserver];
+        [self.player replaceCurrentItemWithPlayerItem:_playerItem];
+    }
+    [self setPlayer:self.player];
+    //add new observer
+    [self addObserverForPlayback:_playerItem];
+    self.state = AZPlayerStateURLLoaded;
+}
+
+- (void)addObserverForPlayback:(AVPlayerItem *)playerItem {
+    WeakSelf
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemPlaybackStalled:) name:AVPlayerItemPlaybackStalledNotification object:_playerItem];
+    self.playbackTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
+        StrongSelf
+        CGFloat current = playerItem.currentTime.value / playerItem.currentTime.timescale;
+        if (strongSelf.current != current) {
+            strongSelf.current = current;
+            if (strongSelf.current > strongSelf.duration) {
+                strongSelf.duration = strongSelf.current;
+            }
+            if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(playerView:playBackProgressChange::url:)]) {
+                [strongSelf.delegate playerView:strongSelf playBackProgressChange:strongSelf.current :strongSelf.progress url:strongSelf.url];
+            }
+        }
+    }];
+}
+
+- (void)calculateDownloadProgress:(AVPlayerItem *)playerItem
+{
+    NSArray *loadedTimeRanges = [playerItem loadedTimeRanges];
+    CMTimeRange timeRange = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
+    float startSeconds = CMTimeGetSeconds(timeRange.start);
+    float durationSeconds = CMTimeGetSeconds(timeRange.duration);
+    NSTimeInterval timeInterval = startSeconds + durationSeconds;// 计算缓冲总进度
+    CMTime duration = playerItem.duration;
+    CGFloat totalDuration = CMTimeGetSeconds(duration);
+    self.loadedProgress = timeInterval / totalDuration;
+}
+
+- (void)bufferingSomeSecond
+{
+    // playbackBufferEmpty会反复进入，因此在bufferingOneSecond延时播放执行完之前再调用bufferingSomeSecond都忽略
+    static BOOL isBuffering = NO;
+    if (isBuffering) {
+        return;
+    }
+    isBuffering = YES;
+    
+    // 需要先暂停一小会之后再播放，否则网络状况不好的时候时间在走，声音播放不出来
+    [self.player pause];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        //        // 如果此时用户已经暂停了，则不再需要开启播放了
+        //        if (self.isPauseByUser) {
+        //            isBuffering = NO;
+        //            return;
+        //        }
+        
+        [self.player play];
+        // 如果执行了play还是没有播放则说明还没有缓存好，则再次缓存一段时间
+        isBuffering = NO;
+        if (!self.playerItem.isPlaybackLikelyToKeepUp) {
+            [self bufferingSomeSecond];
+        }
+    });
 }
 
 #pragma mark - Getter & Setter
@@ -426,66 +497,6 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     // 这里网络不好的时候，就会进入，不做处理，会在playbackBufferEmpty里面缓存之后重新播放
     self.state = AZPlayerStateBuffering;
 }
-
-#pragma mark - Private
-- (void)addObserverForPlayback:(AVPlayerItem *)playerItem {
-    WeakSelf
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemPlaybackStalled:) name:AVPlayerItemPlaybackStalledNotification object:_playerItem];
-    self.playbackTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
-        StrongSelf
-        CGFloat current = playerItem.currentTime.value / playerItem.currentTime.timescale;
-        if (strongSelf.current != current) {
-            strongSelf.current = current;
-            if (strongSelf.current > strongSelf.duration) {
-                strongSelf.duration = strongSelf.current;
-            }
-            if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(playerView:playBackProgressChange::url:)]) {
-                [strongSelf.delegate playerView:strongSelf playBackProgressChange:strongSelf.current :strongSelf.progress url:strongSelf.url];
-            }
-        }
-    }];
-}
-
-- (void)calculateDownloadProgress:(AVPlayerItem *)playerItem
-{
-    NSArray *loadedTimeRanges = [playerItem loadedTimeRanges];
-    CMTimeRange timeRange = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
-    float startSeconds = CMTimeGetSeconds(timeRange.start);
-    float durationSeconds = CMTimeGetSeconds(timeRange.duration);
-    NSTimeInterval timeInterval = startSeconds + durationSeconds;// 计算缓冲总进度
-    CMTime duration = playerItem.duration;
-    CGFloat totalDuration = CMTimeGetSeconds(duration);
-    self.loadedProgress = timeInterval / totalDuration;
-}
-- (void)bufferingSomeSecond
-{
-    // playbackBufferEmpty会反复进入，因此在bufferingOneSecond延时播放执行完之前再调用bufferingSomeSecond都忽略
-    static BOOL isBuffering = NO;
-    if (isBuffering) {
-        return;
-    }
-    isBuffering = YES;
-    
-    // 需要先暂停一小会之后再播放，否则网络状况不好的时候时间在走，声音播放不出来
-    [self.player pause];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        //        // 如果此时用户已经暂停了，则不再需要开启播放了
-        //        if (self.isPauseByUser) {
-        //            isBuffering = NO;
-        //            return;
-        //        }
-        
-        [self.player play];
-        // 如果执行了play还是没有播放则说明还没有缓存好，则再次缓存一段时间
-        isBuffering = NO;
-        if (!self.playerItem.isPlaybackLikelyToKeepUp) {
-            [self bufferingSomeSecond];
-        }
-    });
-}
-
 
 #pragma mark - HCDLoaderURLConnectionDelegate
 
