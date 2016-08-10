@@ -24,6 +24,7 @@ AZPlayerView支持动态设置url，更方便嵌入UITableViewCell。
 @property (nonatomic, readonly) CGFloat        duration;                //视频总时间
 @property (nonatomic, readonly) CGFloat        current;                 //当前播放时间
 @property (nonatomic, readonly) CGFloat        progress;                //播放进度0~1之间
+@property (nonatomic, readonly) CGSize         videoSize;               //视频尺寸
 
 @property (nonatomic, assign  ) BOOL           stopInBackground;        //是否在后台播放，默认YES
 @property (nonatomic, assign) CGFloat          rate;                    //播放速率 0.0相当于暂停, 1.0为原始速率
