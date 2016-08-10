@@ -52,6 +52,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         _isFinishLoad = NO;
         _stopInBackground = YES;
         _autoPlayAfterReady = YES;
+        _muted = NO;
         _startTime = 0;
         _loadedProgress = 0.0;
         _current = 0.0;
@@ -152,14 +153,12 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         _isFirstInit = NO;
     } else {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [self.player removeTimeObserver:_playbackTimeObserver];
     }
     //目前网络资源情况下replaceCurrentItemWithPlayerItem 有BUG 待解决
-    //    if (!self.player) {
-    [self.player removeTimeObserver:_playbackTimeObserver];
     self.player = [AVPlayer playerWithPlayerItem:_playerItem];
-    //    } else {
-    //        [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
-    //    }
+    self.player.muted = _muted;
+    
     [self setPlayer:self.player];
     //add new observer
     [self addObserverForPlayback:_playerItem];
@@ -209,6 +208,8 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         [self.player removeTimeObserver:_playbackTimeObserver];
         [self.player replaceCurrentItemWithPlayerItem:_playerItem];
     }
+    self.player.muted = _muted;
+    
     [self setPlayer:self.player];
     //add new observer
     [self addObserverForPlayback:_playerItem];
@@ -295,6 +296,11 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackBufferEmptyKeyPath options:NSKeyValueObservingOptionNew context:nil];
     [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath options:NSKeyValueObservingOptionNew context:nil];
     [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)setMuted:(BOOL)muted {
+    _muted = muted;
+    self.player.muted = muted;
 }
 
 - (void)setState:(AZPlayerState)state {

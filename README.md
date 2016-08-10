@@ -31,7 +31,7 @@ AZPlayerView支持动态设置url，更方便嵌入UITableViewCell。
 @property (nonatomic, assign) CGFloat          volume;                  //播放音量 0.0最小 1.0最大
 @property (nonatomic, strong) NSURL            *url;                    //资源URL
 @property (nonatomic, assign) AZPlayerGravity  gravity;                 //默认AZPlayerGravityResize
-
+@property (nonatomic, getter=isMuted) BOOL     muted;                   //默认NO 加载音频，设置YES以提升性能
 @property (nonatomic, assign) BOOL             autoPlayAfterReady;      //加载完成后是否自动播放，默认YES
 @property (nonatomic, assign) CGFloat          startTime;               //自动播放的开始时间，默认0，从头开始播放
 

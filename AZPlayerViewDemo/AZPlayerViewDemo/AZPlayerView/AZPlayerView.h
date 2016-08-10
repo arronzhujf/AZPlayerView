@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
 /**每次在设置视频的其他属性后再设置url，确保属性生效*/
 @property (nonatomic, strong) NSURL            *url;                    //资源URL
 @property (nonatomic, assign) AZPlayerGravity  gravity;                 //默认AZPlayerGravityResize
-
+@property (nonatomic, getter=isMuted) BOOL     muted;                   //默认NO 加载音频，设置YES以提升性能
 @property (nonatomic, assign) BOOL             autoPlayAfterReady;      //加载完成后是否自动播放，默认YES
 @property (nonatomic, assign) CGFloat          startTime;               //自动播放的开始时间，默认0，从头开始播放
 
