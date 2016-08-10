@@ -53,10 +53,15 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         _stopInBackground = YES;
         _autoPlayAfterReady = YES;
         _startTime = 0;
+        _loadedProgress = 0.0;
+        _current = 0.0;
+        _duration = 0.0;
+        _rate = 1.0;
+        _volume = 0.5;
+        _videoSize = CGSizeZero;
         _autoRepeat = NO;
         _state = AZPlayerStateUnready;
         _gravity = AZPlayerGravityResize;
-        [self initData];
     }
     return self;
 }
@@ -93,17 +98,8 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     }
 }
 
-- (void)initData {
-    _loadedProgress = 0.0;
-    _current = 0.0;
-    _duration = 0.0;
-    _rate = 1.0;
-    _volume = 0.5;
-    _videoSize = CGSizeZero;
-}
-
 - (void)initPlayerWithUrl:(NSURL *)url {
-    [self initData];
+    [self initUrlResetData];
     NSString *str = [url absoluteString];
     if ([str hasPrefix:@"https"] || [str hasPrefix:@"http"]) {//网络资源
         NSURLComponents *components = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO];
@@ -123,6 +119,13 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         [self loadLoacalResource:url];
     }
     
+}
+
+- (void)initUrlResetData {
+    _loadedProgress = 0.0;
+    _current = 0.0;
+    _duration = 0.0;
+    _videoSize = CGSizeZero;
 }
 
 - (void)dealloc {
