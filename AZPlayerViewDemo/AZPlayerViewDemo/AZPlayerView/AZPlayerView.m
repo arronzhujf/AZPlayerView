@@ -300,7 +300,9 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 - (void)setMuted:(BOOL)muted {
     _muted = muted;
-    self.player.muted = muted;
+    if (!self.player) {
+        self.player.muted = muted;
+    }
 }
 
 - (void)setState:(AZPlayerState)state {
