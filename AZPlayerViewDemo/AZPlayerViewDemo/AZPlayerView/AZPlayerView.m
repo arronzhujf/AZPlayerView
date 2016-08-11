@@ -367,12 +367,10 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         seconds = MIN(seconds, self.duration);
         
         [self.player pause];
-        WeakSelf
-        [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:CMTimeMake(0.5, 1) toleranceAfter:CMTimeMake(0.5, 1) completionHandler:^(BOOL finished) {
-            if (!pause) {
-                [weakSelf.player play];
-            }
-        }];
+        [self.player seekToTime:CMTimeMake(seconds, 1)];
+        if (!pause) {
+            [self.player play];
+        }
     } else {
         _autoPlayAfterReady = YES;
         _startTime = seconds;
@@ -431,9 +429,8 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     }
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         [self.player pause];
-        [self.player seekToTime:CMTimeMake(0, 1) toleranceBefore:CMTimeMake(0.5, 1) toleranceAfter:CMTimeMake(0.5, 1) completionHandler:^(BOOL finished) {
-            self.state = AZPlayerStateStopped;
-        }];
+        [self.player seekToTime:kCMTimeZero];
+        self.state = AZPlayerStateStopped;
     } else {
         _autoPlayAfterReady = NO;
     }
@@ -460,9 +457,8 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
             if (_autoPlayAfterReady) {
                 CGFloat seconds = MAX(0, _startTime);
                 seconds = MIN(seconds, self.duration);
-                [self.player seekToTime:CMTimeMake(seconds, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
-                    [self.player play];
-                }];
+                [self.player seekToTime:CMTimeMake(seconds, 1)];
+                [self.player play];
             } else {
                 [self stop];
             }
