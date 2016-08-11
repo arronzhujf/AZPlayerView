@@ -467,7 +467,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
                 [self stop];
             }
         }
-        else if ([self.player.currentItem status] == AVPlayerItemStatusFailed || [self.player.currentItem status] == AVPlayerItemStatusUnknown)
+        else if ([playerItem status] == AVPlayerItemStatusFailed || [playerItem status] == AVPlayerItemStatusUnknown)
         {
             [self stop];
             if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)])
