@@ -1,9 +1,9 @@
 //
 //  NSString+MD5.h
-//  hcdCachePlayerDemo
+//  AZPlayerViewDemo
 //
-//  Created by polesapp-hcd on 16/7/4.
-//  Copyright © 2016年 Polesapp. All rights reserved.
+//  Created by arronzhu on 16/8/16.
+//  Copyright © 2016年 arronzhu. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

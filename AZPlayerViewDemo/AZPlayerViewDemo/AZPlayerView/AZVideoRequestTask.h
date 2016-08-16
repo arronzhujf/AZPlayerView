@@ -1,7 +1,7 @@
 //  PlayerView.h
-//  LiveViewDemo
+//  AZPlayerViewDemo
 //
-//  Created by arronzhu on 16/7/18.
+//  Created by arronzhu on 16/8/16.
 //  Copyright © 2016年 arronzhu. All rights reserved.
 //
 

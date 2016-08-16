@@ -21,6 +21,8 @@
 		E29A90411D4870790054DBED /* NSString+AZVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = E29A903D1D4870790054DBED /* NSString+AZVideo.m */; };
 		E29A90441D4870F80054DBED /* IMG_2262.MOV in Resources */ = {isa = PBXBuildFile; fileRef = E29A90421D4870F80054DBED /* IMG_2262.MOV */; };
 		E29A90451D4870F80054DBED /* Video_AudioDemo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = E29A90431D4870F80054DBED /* Video_AudioDemo.mp4 */; };
+		E2C6B6C41D63316E00749326 /* AZPlayerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C6B6C31D63316E00749326 /* AZPlayerWrapper.m */; };
+		E2C6B6C71D63336B00749326 /* AZPlayerCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C6B6C61D63336B00749326 /* AZPlayerCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,10 @@
 		E29A903D1D4870790054DBED /* NSString+AZVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+AZVideo.m"; path = "AZPlayerView/NSString+AZVideo.m"; sourceTree = "<group>"; };
 		E29A90421D4870F80054DBED /* IMG_2262.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = IMG_2262.MOV; sourceTree = "<group>"; };
 		E29A90431D4870F80054DBED /* Video_AudioDemo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Video_AudioDemo.mp4; sourceTree = "<group>"; };
+		E2C6B6C21D63316E00749326 /* AZPlayerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AZPlayerWrapper.h; path = AZPlayerView/AZPlayerWrapper.h; sourceTree = "<group>"; };
+		E2C6B6C31D63316E00749326 /* AZPlayerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AZPlayerWrapper.m; path = AZPlayerView/AZPlayerWrapper.m; sourceTree = "<group>"; };
+		E2C6B6C51D63336B00749326 /* AZPlayerCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AZPlayerCache.h; path = AZPlayerView/AZPlayerCache.h; sourceTree = "<group>"; };
+		E2C6B6C61D63336B00749326 /* AZPlayerCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AZPlayerCache.m; path = AZPlayerView/AZPlayerCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +170,10 @@
 			children = (
 				E29A90381D4870790054DBED /* AZPlayerView.h */,
 				E29A90391D4870790054DBED /* AZPlayerView.m */,
+				E2C6B6C51D63336B00749326 /* AZPlayerCache.h */,
+				E2C6B6C61D63336B00749326 /* AZPlayerCache.m */,
+				E2C6B6C21D63316E00749326 /* AZPlayerWrapper.h */,
+				E2C6B6C31D63316E00749326 /* AZPlayerWrapper.m */,
 				E29A90361D4870790054DBED /* AZLoaderURLConnection.h */,
 				E29A90371D4870790054DBED /* AZLoaderURLConnection.m */,
 				E29A903A1D4870790054DBED /* AZVideoRequestTask.h */,
@@ -314,6 +324,8 @@
 				E29A90041D4870500054DBED /* main.m in Sources */,
 				E29A90411D4870790054DBED /* NSString+AZVideo.m in Sources */,
 				E29A90401D4870790054DBED /* AZVideoRequestTask.m in Sources */,
+				E2C6B6C41D63316E00749326 /* AZPlayerWrapper.m in Sources */,
+				E2C6B6C71D63336B00749326 /* AZPlayerCache.m in Sources */,
 				E29A903F1D4870790054DBED /* AZPlayerView.m in Sources */,
 				E29A903E1D4870790054DBED /* AZLoaderURLConnection.m in Sources */,
 			);

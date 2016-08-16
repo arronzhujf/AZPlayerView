@@ -14,17 +14,11 @@
 #define WeakSelf   __typeof(&*self) __weak   weakSelf   = self;
 #define StrongSelf __typeof(&*self) __strong strongSelf = weakSelf;
 
-static NSString *const AZVideoPlayerItemStatusKeyPath = @"status";
-static NSString *const AZVideoPlayerItemLoadedTimeRangesKeyPath = @"loadedTimeRanges";
-static NSString *const AZVideoPlayerItemPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
-static NSString *const AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath = @"playbackLikelyToKeepUp";
-static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentationSize";
-
-@interface AZPlayerView () <AZLoaderURLConnectionDelegate>
+@interface AZPlayerView () <AZLoaderURLConnectionDelegate, AZPlayerCacheDelegate>
+@property (nonatomic, strong) AZPlayerWrapper        *playerWrapper;
 @property (nonatomic, strong) AVURLAsset             *videoURLAsset;
 @property (nonatomic, strong) AVPlayerItem           *playerItem;
 @property (nonatomic, strong) AVAssetImageGenerator  *imageGenerator;
-@property (nonatomic, strong) NSObject               *playbackTimeObserver;
 
 @property (nonatomic, assign) AZPlayerState          state;
 @property (nonatomic, assign) CGFloat                duration;
@@ -33,13 +27,12 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 //@property (nonatomic, assign) BOOL                 isPauseByUser;           //是否被用户暂停
 @property (nonatomic, assign) BOOL                   isLocalVideo;            //是否播放本地文件
-@property (nonatomic, assign) BOOL                   isFirstInit;
 
 /**网络资源*/
 @property (nonatomic, strong) AZLoaderURLConnection  *resouerLoader;          //远程资源加载的代理类
 @property (nonatomic, assign) CGFloat                loadedProgress;          //远程资源的加载进度
 @property (nonatomic, assign) BOOL                   isFinishLoad;            //是否下载完毕
-
+@property (nonatomic, assign, getter=isObserve) BOOL observe;                 //标记是否注册了通知
 @property (nonatomic, weak) id<AZPlayerViewDelegate> delegate;
 @end
 
@@ -48,21 +41,20 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 - (instancetype)initWithFrame:(CGRect)frame delegate:(id<AZPlayerViewDelegate>)delegate{
     if (self = [super initWithFrame:frame]) {
         _delegate = delegate;
-        _isFirstInit = YES;
         _isFinishLoad = NO;
         _stopInBackground = YES;
         _autoPlayAfterReady = YES;
         _muted = NO;
         _startTime = 0;
-        _loadedProgress = 0.0;
-        _current = 0.0;
-        _duration = 0.0;
         _rate = 1.0;
         _volume = 0.5;
-        _videoSize = CGSizeZero;
         _autoRepeat = NO;
         _state = AZPlayerStateUnready;
         _gravity = AZPlayerGravityResize;
+        _observe = NO;
+        _maskImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        _maskImageView.contentMode = UIViewContentModeScaleToFill;
+        [self addSubview:_maskImageView];
     }
     return self;
 }
@@ -112,6 +104,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         NSString *cachePath =  [[_cacheUrl absoluteString] stringByAppendingPathComponent:md5File];
         if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             NSURL *localURL = [NSURL fileURLWithPath:cachePath];
+            _url = localURL;
             [self loadLoacalResource:localURL];
         } else {
             [self loadRemoteResource:url];
@@ -119,24 +112,34 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     } else {//本地资源
         [self loadLoacalResource:url];
     }
-    
 }
 
+/**替换URL时需要重新初始化的数据*/
 - (void)initUrlResetData {
     _loadedProgress = 0.0;
     _current = 0.0;
     _duration = 0.0;
     _videoSize = CGSizeZero;
+    _maskImageView.hidden = YES;
 }
 
 - (void)dealloc {
     [self.resouerLoader.task clearData];
-    self.playerItem = nil;
-    [self.player removeTimeObserver:_playbackTimeObserver];
-    [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [[AZPlayerCache sharedInstance] removeObserver:self forURL:_url];
 }
 
 #pragma mark - Private
+- (void)loadLoacalResource:(NSURL *)url {
+    NSLog(@"load local resource");
+    self.isLocalVideo = YES;
+    [[AZPlayerCache sharedInstance] addObserver:self forURL:url];
+    self.playerWrapper = [[AZPlayerCache sharedInstance] playerForURL:url];
+    self.imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_playerWrapper.videoURLAsset];
+    self.player = _playerWrapper.player;
+    self.playerItem = _playerWrapper.playerItem;
+    self.player.muted = _muted;
+}
+
 - (void)loadRemoteResource:(NSURL *)url {
     NSLog(@"load remote resource");
     self.isLocalVideo = NO;
@@ -147,92 +150,21 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     self.videoURLAsset          = [AVURLAsset URLAssetWithURL:playUrl options:nil];
     [_videoURLAsset.resourceLoader setDelegate:_resouerLoader queue:dispatch_get_main_queue()];
     self.imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_videoURLAsset];
+    
     self.playerItem      = [AVPlayerItem playerItemWithAsset:_videoURLAsset];
-    //remove old observer
-    if (_isFirstInit) {
-        _isFirstInit = NO;
-    } else {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        [self.player removeTimeObserver:_playbackTimeObserver];
-    }
-    //目前网络资源情况下replaceCurrentItemWithPlayerItem 有BUG 待解决
     self.player = [AVPlayer playerWithPlayerItem:_playerItem];
     self.player.muted = _muted;
     
-    [self setPlayer:self.player];
     //add new observer
     [self addObserverForPlayback:_playerItem];
-}
-
-- (void)loadLoacalResource:(NSURL *)url {
-    NSLog(@"load local resource");
-    self.videoURLAsset = [AVURLAsset URLAssetWithURL:url options:nil];
-    self.imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_videoURLAsset];
-    NSString *tracksKey = @"tracks";
-    WeakSelf
-    [self.videoURLAsset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSError *error;
-            AVKeyValueStatus status = [weakSelf.videoURLAsset statusOfValueForKey:tracksKey error:&error];
-            
-            if (status == AVKeyValueStatusLoaded) {
-                [weakSelf loadedLocalAssetForPlay];
-            } else {
-                if (weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)]) {
-                    [weakSelf.delegate playerView:weakSelf didFailWithError:error url:url];
-                }
-                NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
-            }
-        });
-    }];
-}
-
-- (void)loadedLocalAssetForPlay {
-    self.isLocalVideo = YES;
-    self.playerItem = [AVPlayerItem playerItemWithURL:_url];
-    NSArray *array = self.videoURLAsset.tracks;
-    for (AVAssetTrack *track in array) {
-        if ([track.mediaType isEqualToString:AVMediaTypeVideo]) {
-            _videoSize = track.naturalSize;
-        }
-    }
-    //remove old observer
-    if (_isFirstInit) {
-        _isFirstInit = NO;
-    } else {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-    if (!self.player) {
-        self.player = [AVPlayer playerWithPlayerItem:_playerItem];
-    } else {
-        [self.player removeTimeObserver:_playbackTimeObserver];
-        [self.player replaceCurrentItemWithPlayerItem:_playerItem];
-    }
-    self.player.muted = _muted;
-    
-    [self setPlayer:self.player];
-    //add new observer
-    [self addObserverForPlayback:_playerItem];
-    self.state = AZPlayerStateURLLoaded;
 }
 
 - (void)addObserverForPlayback:(AVPlayerItem *)playerItem {
-    WeakSelf
+    [playerItem addObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [playerItem addObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath options:NSKeyValueObservingOptionNew context:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemPlaybackStalled:) name:AVPlayerItemPlaybackStalledNotification object:_playerItem];
-    self.playbackTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
-        StrongSelf
-        CGFloat current = playerItem.currentTime.value / playerItem.currentTime.timescale;
-        if (strongSelf.current != current) {
-            strongSelf.current = current;
-            if (strongSelf.current > strongSelf.duration) {
-                strongSelf.duration = strongSelf.current;
-            }
-            if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(playerView:playBackProgressChange::url:)]) {
-                [strongSelf.delegate playerView:strongSelf playBackProgressChange:strongSelf.current :strongSelf.progress url:strongSelf.url];
-            }
-        }
-    }];
 }
 
 - (void)calculateDownloadProgress:(AVPlayerItem *)playerItem
@@ -275,39 +207,54 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     });
 }
 
+- (BOOL)isCurrentItem:(AVPlayerItem *)playerItem {
+    if (![playerItem.asset isKindOfClass:[AVURLAsset class]]) {
+        return NO;
+    }
+    AVURLAsset *urlAsset = (AVURLAsset *)playerItem.asset;
+    NSURL *url = [urlAsset URL];
+    if ([url.absoluteString hasPrefix:kCustomVideoScheme]) {
+        NSURLComponents *components = [[NSURLComponents alloc] initWithURL:_url resolvingAgainstBaseURL:NO];
+        components.scheme = kCustomVideoScheme;
+        return [url isEqual:[components URL]];
+    }
+    return [url isEqual:_url];
+}
+
 #pragma mark - Getter & Setter
 - (void)setUrl:(NSURL *)url {
+    if (url == nil) {
+        return;
+    }
+    if (url == _url) {
+        [self stop];
+        return;
+    }
+    //
+    self.player.muted = YES;
+    if (self.player && _isLocalVideo) {
+        [[AZPlayerCache sharedInstance] removeObserver:self forURL:_url];
+    } else if(self.player && !_isLocalVideo){
+        [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath];
+        [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath];
+        [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
     _url = url;
     [self.resouerLoader.task clearData];
     [self initPlayerWithUrl:url];
 }
 
-- (void)setPlayerItem:(AVPlayerItem *)playerItem {
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemLoadedTimeRangesKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackBufferEmptyKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath];
-    [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath];
-    
-    _playerItem = playerItem;
-    
-    [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemLoadedTimeRangesKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackBufferEmptyKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_playerItem addObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath options:NSKeyValueObservingOptionNew context:nil];
-}
-
 - (void)setMuted:(BOOL)muted {
     _muted = muted;
-    if (!self.player) {
+    if (self.player) {
         self.player.muted = muted;
     }
 }
 
 - (void)setState:(AZPlayerState)state {
     _state = state;
-    [self changeToNewState:state];
+    [self player:self.playerWrapper didChangeToNewState:state url:_url];
 }
 
 - (void)setLoadedProgress:(CGFloat)loadedProgress {
@@ -334,11 +281,16 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     self.player.volume = volume;
 }
 
-/**
- *  计算播放进度
- *
- *  @return 播放时间进度
- */
+- (CGSize)videoSize {
+    NSArray *array = self.videoURLAsset.tracks;
+    for (AVAssetTrack *track in array) {
+        if ([track.mediaType isEqualToString:AVMediaTypeVideo]) {
+            _videoSize = track.naturalSize;
+        }
+    }
+    return _videoSize;
+}
+
 - (CGFloat)progress
 {
     if (self.duration > 0) {
@@ -356,7 +308,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         [self.player play];
         self.state = AZPlayerStatePlaying;
     } else {
-        NSLog(@"AZPlayerView the url resource is not ready, video will play after ready, please wait.");
+        NSLog(@"PLPlayerView the url resource is not ready, video will play after ready, please wait.");
         _autoPlayAfterReady = YES;
     }
 }
@@ -365,7 +317,6 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     if (self.state != AZPlayerStateUnready && self.state != AZPlayerStateURLLoaded) {
         seconds = MAX(0, seconds);
         seconds = MIN(seconds, self.duration);
-        
         [self.player pause];
         [self.player seekToTime:CMTimeMake(seconds, 1)];
         if (!pause) {
@@ -374,7 +325,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     } else {
         _autoPlayAfterReady = YES;
         _startTime = seconds;
-        NSLog(@"AZPlayerView the url resource is not ready, AZPlayerView will seekToTime after ready,please wait.");
+        NSLog(@"PLPlayerView the url resource is not ready, PLPlayerView will seekToTime after ready,please wait.");
     }
 }
 
@@ -402,7 +353,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         CGImageRelease(imageRef);
         return thumbnail;
     } else {
-        NSLog(@"AZPlayerView get thumbnail failed, the url resource is not ready!");
+        NSLog(@"PLPlayerView get thumbnail failed, the url resource is not ready!");
         return nil;
     }
 }
@@ -419,7 +370,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         self.state = AZPlayerStatePause;
     } else {
         _autoPlayAfterReady = NO;
-        NSLog(@"AZPlayerView pause failed, the url resource is not ready! video will pause when it is ready");
+        NSLog(@"PLPlayerView the url resource is not ready, video will pause when it is ready");
     }
 }
 
@@ -434,6 +385,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     } else {
         _autoPlayAfterReady = NO;
     }
+    
 }
 
 #pragma mark - Observer
@@ -448,6 +400,9 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
+    if (![self isCurrentItem:playerItem]) {
+        return;
+    }
     if ([keyPath isEqualToString:AZVideoPlayerItemStatusKeyPath]) {
         if ([playerItem status] == AVPlayerItemStatusReadyToPlay) {
             self.duration = CMTimeGetSeconds(self.player.currentItem.duration);
@@ -465,6 +420,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
         }
         else if ([playerItem status] == AVPlayerItemStatusFailed || [playerItem status] == AVPlayerItemStatusUnknown)
         {
+            _maskImageView.hidden = NO;
             [self stop];
             if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)])
             {
@@ -486,26 +442,48 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
     return;
 }
 
-- (void)changeToNewState:(AZPlayerState)state {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didChangeToNewState:url:)]) {
-        [self.delegate playerView:self didChangeToNewState:state url:_url];
-    }
-}
-
-- (void)playerItemDidReachEnd:(NSNotification *)notification {
-    if (_autoRepeat) {
-        [self seekToTime:0 Pause:NO];
-    }
+- (void)playerItemDidReachEnd:(AVPlayerItem *)item {
     self.state = AZPlayerStateFinish;
 }
 
-- (void)playerItemPlaybackStalled:(NSNotification *)notification
-{
-    // 这里网络不好的时候，就会进入，不做处理，会在playbackBufferEmpty里面缓存之后重新播放
+- (void)playerItemPlaybackStalled:(AVPlayerItem *)item {
+    [self bufferingSomeSecond];
     self.state = AZPlayerStateBuffering;
 }
 
-#pragma mark - HCDLoaderURLConnectionDelegate
+#pragma mark - AZPlayerCacheDelegate
+- (void)player:(AZPlayerWrapper *)playerWrapper didChangeToNewState:(AZPlayerState)state url:(NSURL *)url {
+    _state = state;
+    if (state == AZPlayerStateURLLoaded) {
+        self.playerWrapper = playerWrapper;
+        self.player = playerWrapper.player;
+        self.playerItem = playerWrapper.playerItem;
+        self.player.muted = _muted;
+    }
+    if (state == AZPlayerStateReady && _autoPlayAfterReady == YES) {
+        [self play];
+    }
+    if (state == AZPlayerStateFinish && _autoRepeat == YES) {
+        [self seekToTime:0 Pause:NO];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didChangeToNewState:url:)]) {
+        [self.delegate playerView:self didChangeToNewState:state url:url];
+    }
+}
+
+- (void)player:(AZPlayerWrapper *)playerWrapper playBackProgressChange:(CGFloat)currentTime :(CGFloat)currentProgress url:(NSURL *)url {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:playBackProgressChange::url:)]) {
+        [self.delegate playerView:self playBackProgressChange:currentTime :currentProgress url:url];
+    }
+}
+
+- (void)player:(AZPlayerWrapper *)playerWrapper didFailWithError:(NSError *)error url:(NSURL *)url {
+    _maskImageView.hidden = NO;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)]) {
+        [self.delegate playerView:self didFailWithError:error url:url];
+    }
+}
+#pragma mark - AZLoaderURLConnectionDelegate
 
 - (void)didFinishLoadingWithTask:(AZVideoRequestTask *)task
 {
@@ -514,6 +492,7 @@ static NSString *const AZVideoPlayerItemPresentationSizeKeyPath = @"presentation
 
 - (void)didFailLoadingWithTask:(AZVideoRequestTask *)task withError:(NSError *)error
 {
+    _maskImageView.hidden = NO;
     if (self.delegate && [self.delegate respondsToSelector:@selector(playerView:didFailWithError:url:)])
     {
         [self.delegate playerView:self didFailWithError:error url:_url];
