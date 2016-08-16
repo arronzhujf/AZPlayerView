@@ -2,6 +2,8 @@
 
 一款iOS视频播放组件(UIView中嵌入AVPlayer),支持本地url和网络url,网络资源目前只支持mp4。支持网络MP4资源缓存本地。
 
+AZPlayer专为小视频定制，为内嵌入tableview的性能优化实现了AVPlayer的缓存机制，支持动态设置url，更方便嵌入UITableViewCell。
+
 ##Usage:
 
 就像初始化UIView一样初始化AZPlayerView。
@@ -17,9 +19,9 @@
 - 然后add进你的superView吧！
 ```
 
-AZPlayer专为小视频定制，为内嵌入tableview的性能优化实现了AVPlayer的缓存机制，支持动态设置url，更方便嵌入UITableViewCell。
 
-然而这些你都不必去了解，组件帮你做好了一切通知的remove和add,你只需要在小视频销毁之后调用一次:
+
+你不必去了解底层缓存机制，组件帮你做好了一切通知的remove和add,你只需要在小视频销毁之后调用一次:
 ```
 [[PLPlayerCache sharedInstance] clearCache];
 ```
