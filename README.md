@@ -2,22 +2,34 @@
 
 一款iOS视频播放组件(UIView中嵌入AVPlayer),支持本地url和网络url,网络资源目前只支持mp4。支持网络MP4资源缓存本地。
 
-Usage:
+##Usage:
 
 就像初始化UIView一样初始化AZPlayerView。
 
-```
-/**初始化方法*/
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id<AZPlayerViewDelegate>) delegate;
-```
-
 本地资源在初始化后直接设置URL;
+
 网络资源需要先设置cacheUrl再设置url(顺序不能乱)。
 
+```
+- (instancetype)initWithFrame:(CGRect)frame delegate:(id<AZPlayerViewDelegate>) delegate;
+- 设置各种需要的属性
+- 设置url
+- 然后add进你的superView吧！
+```
+
+AZPlayer专为小视频定制，为内嵌入tableview的性能优化实现了AVPlayer的缓存机制，支持动态设置url，更方便嵌入UITableViewCell。
+
+然而这些你都不必去了解，组件帮你做好了一切通知的remove和add,你只需要在小视频销毁之后调用一次:
+```
+[[PLPlayerCache sharedInstance] clearCache];
+```
+
+
+
+##接口介绍:
 AZPlayerView提供了获取视频各种属性的接口：
 current, duration,progress,rate,volume,gravity等。
 
-AZPlayerView支持动态设置url，更方便嵌入UITableViewCell。
 
 ```
 @property (nonatomic, readonly) AZPlayerState  state;                   //player的状态
@@ -98,31 +110,13 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
  */
 - (void)playerView:(AZPlayerView *)playerView didChangeToNewState:(AZPlayerState)state url:(NSURL *)url;
 /**
- *  每隔一秒抛出视频的播放时间和播放时间百分比
- *
- *  @param playerView      playerView
- *  @param currentTime     当前播放时间
- *  @param currentProgress 当前播放时间占比
+ *  每隔一秒抛出视频的播放时间和播放时间百分比 TODO:网络资源暂未实现
  */
 - (void)playerView:(AZPlayerView *)playerView playBackProgressChange:(CGFloat)currentTime :(CGFloat)currentProgress url:(NSURL *)url;
 /**
  *  网络资源加载的进度
  */
 - (void)playerView:(AZPlayerView *)playerView loadedProgressChange:(CGFloat)loadedProgress;
-
-/**
- *  抛出错误
- *
- *  @param playerView playerView
- *  @param error      分为本地资源加载错误和网络资源加载错误两种,网络资源的错误码如下：
- *                    网络中断：-1005
- *                    无网络连接：-1009
- *                    请求超时：-1001
- *                    服务器内部错误：-1004
- *                    找不到服务器：-1003
- *  @param url        url
- */
-- (void)playerView:(AZPlayerView *)playerView didFailWithError:(NSError *)error url:(NSURL *)url;
 ```
 
 
