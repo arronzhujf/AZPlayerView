@@ -119,6 +119,10 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
  *  网络资源加载的进度
  */
 - (void)playerView:(AZPlayerView *)playerView loadedProgressChange:(CGFloat)loadedProgress;
+ /**
+ *  抛出错误
+ */
+- (void)playerView:(PLPlayerView *)playerView didFailWithError:(NSError *)error url:(NSURL *)url;
 ```
 
 
