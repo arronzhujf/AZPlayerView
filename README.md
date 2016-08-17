@@ -23,10 +23,17 @@ AZPlayer专为小视频定制，为内嵌入tableview的性能优化实现了AVP
 
 你不必去了解底层缓存机制，组件帮你做好了一切通知的remove和add,你只需要在小视频销毁之后调用一次:
 ```
-[[PLPlayerCache sharedInstance] clearCache];
+[[AZPlayerCache sharedInstance] clearCache];
 ```
 
-
+##优势
+1. 整合本地资源和网络资源，提供统一的接口。
+2. 专为在tableview中内嵌入小视频做了性能优化，告别滑动卡顿：
+ - AVPlayer缓存。
+ - AVPlayer预加载。 
+ - 支持动态切换URL。
+3. 提供了视频相关的几乎一切接口，音量、播放速率、蒙层、进度、视频状态等。
+4. 提供了网络资源边下边播的解决方案。
 
 ##接口介绍:
 AZPlayerView提供了获取视频各种属性的接口：
@@ -40,16 +47,18 @@ current, duration,progress,rate,volume,gravity等。
 @property (nonatomic, readonly) CGFloat        progress;                //播放进度0~1之间
 @property (nonatomic, readonly) CGSize         videoSize;               //视频尺寸
 
-@property (nonatomic, assign  ) BOOL           stopInBackground;        //是否在后台播放，默认YES
+@property (nonatomic, assign) BOOL             stopInBackground;        //是否在后台播放，默认YES
 @property (nonatomic, assign) CGFloat          rate;                    //播放速率 0.0相当于暂停, 1.0为原始速率
 @property (nonatomic, assign) CGFloat          volume;                  //播放音量 0.0最小 1.0最大
+@property (nonatomic, strong) UIImageView      *maskImageView;          //发生错误时候的遮罩层 使用:self.maskImageView.image = XXX
+/**每次在设置视频的其他属性后再设置url，确保属性生效*/
 @property (nonatomic, strong) NSURL            *url;                    //资源URL
 @property (nonatomic, assign) AZPlayerGravity  gravity;                 //默认AZPlayerGravityResize
 @property (nonatomic, getter=isMuted) BOOL     muted;                   //默认NO 加载音频，设置YES以提升性能
 @property (nonatomic, assign) BOOL             autoPlayAfterReady;      //加载完成后是否自动播放，默认YES
 @property (nonatomic, assign) CGFloat          startTime;               //自动播放的开始时间，默认0，从头开始播放
-
 @property (nonatomic, assign) BOOL             autoRepeat;              //循环播放，默认NO
+@property (nonatomic, assign) BOOL             cache;                   //是否使用缓存
 /**网络资源*/
 @property (nonatomic, strong) NSURL            *cacheUrl;               //若是获取网络资源，则必须在设置url之前设置缓存url
 @property (nonatomic, readonly) CGFloat        loadedProgress;          //缓冲的进度
@@ -99,12 +108,6 @@ typedef NS_ENUM(NSInteger, AZPlayerState) {
     AZPlayerStatePause,            //暂停播放
     AZPlayerStateFinish,           //播放完成
 };
-
-typedef NS_ENUM(NSInteger, AZPlayerGravity) {
-    AZPlayerGravityResizeAspect = 1,
-    AZPlayerGravityResizeAspectFill,
-    AZPlayerGravityResize,
-};
 ```
 ```
 /**
@@ -119,11 +122,9 @@ typedef NS_ENUM(NSInteger, AZPlayerGravity) {
  *  网络资源加载的进度
  */
 - (void)playerView:(AZPlayerView *)playerView loadedProgressChange:(CGFloat)loadedProgress;
- /**
+
+/**
  *  抛出错误
  */
-- (void)playerView:(PLPlayerView *)playerView didFailWithError:(NSError *)error url:(NSURL *)url;
+- (void)playerView:(AZPlayerView *)playerView didFailWithError:(NSError *)error url:(NSURL *)url;
 ```
-
-
-开始使用吧！
