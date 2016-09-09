@@ -94,7 +94,15 @@
 - (void)initPlayerWithUrl:(NSURL *)url {
     [self initUrlResetData];
     NSString *str = [url absoluteString];
-    if ([str hasPrefix:@"https"] || [str hasPrefix:@"http"]) {//网络资源
+    if ([str hasSuffix:@".m3u8"]) {//HLS直播
+        self.isLocalVideo = NO;
+        self.playerItem = [AVPlayerItem playerItemWithURL:url];
+        self.player = [AVPlayer playerWithPlayerItem:_playerItem];
+        self.player.muted = _muted;
+        
+        //add new observer
+        [self addObserverForPlayback:_playerItem];
+    } else if ([str hasPrefix:@"https"] || [str hasPrefix:@"http"]) {//网络资源
         NSURLComponents *components = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO];
         components.scheme = kCustomVideoScheme;
         NSURL *playUrl = [components URL];
@@ -126,6 +134,10 @@
 - (void)dealloc {
     [self.resouerLoader.task clearData];
     [[AZPlayerCache sharedInstance] removeObserver:self forURL:_url];
+    if (!_isLocalVideo) {
+        [_playerItem removeObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
 }
 
 #pragma mark - Private
@@ -161,8 +173,6 @@
 
 - (void)addObserverForPlayback:(AVPlayerItem *)playerItem {
     [playerItem addObserver:self forKeyPath:AZVideoPlayerItemStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [playerItem addObserver:self forKeyPath:AZVideoPlayerItemPlaybackLikelyToKeepUpKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [playerItem addObserver:self forKeyPath:AZVideoPlayerItemPresentationSizeKeyPath options:NSKeyValueObservingOptionNew context:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemPlaybackStalled:) name:AVPlayerItemPlaybackStalledNotification object:_playerItem];
 }
