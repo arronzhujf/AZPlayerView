@@ -309,6 +309,12 @@
     return 0;
 }
 
+-(NSURL *)urlOfCurrentlyPlayingInPlayer:(AVPlayer *)player{
+    AVAsset *currentPlayerAsset = player.currentItem.asset;
+    if (![currentPlayerAsset isKindOfClass:AVURLAsset.class]) return nil;
+    return [(AVURLAsset *)currentPlayerAsset URL];
+}
+
 #pragma mark - ACTION
 - (void)play {
     if (self.state == AZPlayerStatePlaying) {
@@ -418,14 +424,19 @@
             self.duration = CMTimeGetSeconds(self.player.currentItem.duration);
             self.player.rate = _rate;
             self.player.volume = _volume;
-            self.state = AZPlayerStateReady;
-            if (_autoPlayAfterReady) {
-                CGFloat seconds = MAX(0, _startTime);
-                seconds = MIN(seconds, self.duration);
-                [self.player seekToTime:CMTimeMake(seconds, 1)];
-                [self.player play];
+            if (![[[self urlOfCurrentlyPlayingInPlayer:self.player] absoluteString] hasSuffix:@".m3u8"]) {
+                if (_autoPlayAfterReady) {
+                    CGFloat seconds = MAX(0, _startTime);
+                    seconds = MIN(seconds, self.duration);
+                    [self.player seekToTime:CMTimeMake(seconds, 1)];
+                    [self.player play];
+                } else {
+                    [self stop];
+                }
+                self.state = AZPlayerStateReady;
             } else {
-                [self stop];
+                self.state = AZPlayerStateReady;
+                [self play];
             }
         }
         else if ([playerItem status] == AVPlayerItemStatusFailed || [playerItem status] == AVPlayerItemStatusUnknown)

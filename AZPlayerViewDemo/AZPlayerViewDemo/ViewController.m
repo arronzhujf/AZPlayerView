@@ -39,11 +39,12 @@
     self.playerView.autoPlayAfterReady = YES;
     self.playerView.autoRepeat = YES;
     self.playerView.startTime = 10;
-    self.playerView.url = originalMovieURL1;
+//    self.playerView.url = originalMovieURL1;
+//    self.playerView.url = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
     
-//        NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
-//        self.playerView.cacheUrl = [NSURL URLWithString:document];
-//        self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/14564977406580.mp4"];
+    NSString *document = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+    self.playerView.cacheUrl = [NSURL URLWithString:document];
+    self.playerView.url = [NSURL URLWithString:@"http://baobab.wdjcdn.com/14564977406580.mp4"];
     
     [self.view addSubview:self.playerView];
     
