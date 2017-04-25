@@ -41,6 +41,8 @@
 - (AZPlayerWrapper *)playerForURL:(NSURL *)url {
     if ([_playerWrapperDic objectForKey:url.absoluteString]) {
         AZPlayerWrapper *wrapper = [_playerWrapperDic objectForKey:url.absoluteString];
+        [wrapper.player play];
+        [wrapper.player setMuted:NO];
         return wrapper;
     }
     AZPlayerWrapper *wrapper = [[AZPlayerWrapper alloc] initWithURL:url delegate:self];

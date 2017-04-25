@@ -132,6 +132,7 @@
 }
 
 - (void)dealloc {
+    [self setMuted:YES];
     [self.resouerLoader.task clearData];
     [[AZPlayerCache sharedInstance] removeObserver:self forURL:_url];
     if (!_isLocalVideo) {
