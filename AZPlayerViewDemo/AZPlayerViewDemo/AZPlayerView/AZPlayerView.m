@@ -302,6 +302,14 @@
     return _videoSize;
 }
 
+- (CGFloat)current {
+    return CMTimeGetSeconds(self.player.currentItem.currentTime);
+}
+
+- (CGFloat)duration {
+    return CMTimeGetSeconds(self.player.currentItem.duration);
+}
+
 - (CGFloat)progress
 {
     if (self.duration > 0) {
